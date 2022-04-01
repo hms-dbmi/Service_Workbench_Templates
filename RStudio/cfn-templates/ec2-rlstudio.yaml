@@ -56,6 +56,13 @@ Parameters:
   EgressStoreIamPolicyDocument:
     Type: String
     Description: The IAM policy for launched workstation to access egress store
+    
+  ALBSubnet1:
+    Type: String
+    Description:  ALBSubnet1 for ALB RStudio
+  ALBSubnet2:
+    Type: String
+    Description: ALBSubnet2 for ALB RStudio
 
 Conditions:
   IamPolicyEmpty: !Equals [!Ref IamPolicyDocument, "{}"]
