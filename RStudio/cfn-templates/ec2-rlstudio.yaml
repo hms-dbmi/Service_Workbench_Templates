@@ -65,10 +65,9 @@ Parameters:
     Description: ALBSubnet2 for ALB RStudio
   LoadBalancerType:
     Type: String
-    Description:  Enter internal if subnets are private subnets or enter internet-facing if subnets are public subnets 
-    AllowedValues : ["internal, "internet-facing"]
+    Description: Enter internal if subnets are private subnets or enter internet-facing if subnets are public subnets 
+    AllowedValues : ["internal", "internet-facing"]
     
-
 Conditions:
   IamPolicyEmpty: !Equals [!Ref IamPolicyDocument, "{}"]
   EgressStoreIamPolicyEmpty: !Equals [!Ref EgressStoreIamPolicyDocument, "{}"]
