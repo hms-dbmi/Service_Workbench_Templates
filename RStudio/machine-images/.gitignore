@@ -16,4 +16,4 @@
 !.vscode/extensions.json
 
 config/infra/*.yml
-config/infra/config*.json
+config/infra/config-*.json

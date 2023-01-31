@@ -69,6 +69,7 @@ Parameters:
   AutoStopIdleTimeInMinutes:
     Type: Number
     Description: Number of idle minutes for auto stop to shutdown the instance (0 to disable auto-stop)
+    Default: 120
     
 Conditions:
   IamPolicyEmpty: !Equals [!Ref IamPolicyDocument, "{}"]
@@ -256,7 +257,7 @@ Resources:
 
           # Customize workspace
           IDLE_TIME="${AutoStopIdleTimeInMinutes}"
-          SESSION_TIME=$(($(expr $IDLE_TIME \* 2) > 120 ? $(expr $IDLE_TIME \* 2) : 120)) # min 120, or 2(IDLE_TIME)
+          SESSION_TIME=$(($(expr $IDLE_TIME \* 2) > 720 ? $(expr $IDLE_TIME \* 2) : 720)) # minimum 720 or 2(IDLE_TIME)
           sed -i "/^MAX_IDLE_MINUTES /s/=.*$/= ${IDLE_TIME}/" /usr/local/bin/check-idle
           echo "auth-timeout-minutes=${SESSION_TIME}" >> /etc/rstudio/rserver.conf
           mkdir -p /home/rstudio-user/.config/rstudio
