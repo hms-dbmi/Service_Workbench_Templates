@@ -56,7 +56,6 @@ Parameters:
   EgressStoreIamPolicyDocument:
     Type: String
     Description: The IAM policy for launched workstation to access egress store
-    
   ALBSubnet1:
     Type: String
     Description:  ALBSubnet1 for ALB RStudio
@@ -67,6 +66,9 @@ Parameters:
     Type: String
     Description: Enter internal if subnets are private subnets or enter internet-facing if subnets are public subnets 
     AllowedValues : ["internal", "internet-facing"]
+  AutoStopIdleTimeInMinutes:
+    Type: Number
+    Description: Number of idle minutes for auto stop to shutdown the instance (0 to disable auto-stop)
     
 Conditions:
   IamPolicyEmpty: !Equals [!Ref IamPolicyDocument, "{}"]
@@ -251,6 +253,14 @@ Resources:
           aws s3 cp "${EnvironmentInstanceFiles}/get_bootstrap.sh" "/tmp"
           chmod 500 "/tmp/get_bootstrap.sh"
           /tmp/get_bootstrap.sh "${EnvironmentInstanceFiles}" '${S3Mounts}' 2>&1 >> "/var/log/bootstrap.log"
+
+          # Customize workspace
+          IDLE_TIME="${AutoStopIdleTimeInMinutes}"
+          SESSION_TIME=$(($(expr $IDLE_TIME \* 2) > 120 ? $(expr $IDLE_TIME \* 2) : 120)) # min 120, or 2(IDLE_TIME)
+          sed -i "/^MAX_IDLE_MINUTES /s/=.*$/= ${IDLE_TIME}/" /usr/local/bin/check-idle
+          echo "auth-timeout-minutes=${SESSION_TIME}" >> /etc/rstudio/rserver.conf
+          mkdir -p /home/rstudio-user/.config/rstudio
+          echo '{"initial_working_directory":"~","auto_save_on_blur":true,"auto_save_on_idle":"commit","posix_terminal_shell":"bash"}' > /home/rstudio-user/.config/rstudio/rstudio-prefs.json
 
           # Signal result to CloudFormation
           /opt/aws/bin/cfn-signal -e $? --stack "${AWS::StackName}" --resource "EC2Instance" --region "${AWS::Region}"
