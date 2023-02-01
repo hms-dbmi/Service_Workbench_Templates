@@ -67,9 +67,8 @@ Parameters:
     Description: Enter internal if subnets are private subnets or enter internet-facing if subnets are public subnets 
     AllowedValues : ["internal", "internet-facing"]
   AutoStopIdleTimeInMinutes:
-    Type: Number
+    Type: String
     Description: Number of idle minutes for auto stop to shutdown the instance (0 to disable auto-stop)
-    Default: 120
     
 Conditions:
   IamPolicyEmpty: !Equals [!Ref IamPolicyDocument, "{}"]
@@ -253,13 +252,13 @@ Resources:
           # Download and execute bootstrap script
           aws s3 cp "${EnvironmentInstanceFiles}/get_bootstrap.sh" "/tmp"
           chmod 500 "/tmp/get_bootstrap.sh"
-          /tmp/get_bootstrap.sh "${EnvironmentInstanceFiles}" '${S3Mounts}' 2>&1 >> "/var/log/bootstrap.log"
+          /tmp/get_bootstrap.sh "${EnvironmentInstanceFiles}" '${S3Mounts}' >> "/var/log/bootstrap.log" 2>&1
 
           # Customize workspace
           IDLE_TIME="${AutoStopIdleTimeInMinutes}"
           SESSION_TIME=$(($(expr $IDLE_TIME \* 2) > 720 ? $(expr $IDLE_TIME \* 2) : 720)) # minimum 720 or 2(IDLE_TIME)
-          sed -i "/^MAX_IDLE_MINUTES /s/=.*$/= ${IDLE_TIME}/" /usr/local/bin/check-idle
-          echo "auth-timeout-minutes=${SESSION_TIME}" >> /etc/rstudio/rserver.conf
+          sed -i "/^MAX_IDLE_MINUTES /s/=.*$/= $IDLE_TIME/" /usr/local/bin/check-idle
+          echo "auth-timeout-minutes=$SESSION_TIME" >> /etc/rstudio/rserver.conf
           mkdir -p /home/rstudio-user/.config/rstudio
           echo '{"initial_working_directory":"~","auto_save_on_blur":true,"auto_save_on_idle":"commit","posix_terminal_shell":"bash"}' > /home/rstudio-user/.config/rstudio/rstudio-prefs.json
 
