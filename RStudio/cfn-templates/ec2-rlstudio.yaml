@@ -98,7 +98,7 @@ Resources:
           - Effect: Allow
             Action:
               - "sts:AssumeRole"
-            Resource: "arn:aws:iam::*:role/swb-*"
+            Resource: !Sub 'arn:${AWS::Partition}:iam::*:role/swb-*'
   IAMRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -133,7 +133,7 @@ Resources:
               - Effect: "Allow"
                 Action: "s3:GetObject"
                 Resource: !Sub
-                  - "arn:aws:s3:::${S3Location}/*"
+                  - "arn:${AWS::Partition}:s3:::${S3Location}/*"
                   # Remove "s3://" prefix from EnvironmentInstanceFiles
                   - S3Location:
                       !Select [
@@ -144,7 +144,7 @@ Resources:
               - Effect: "Allow"
                 Action: "s3:ListBucket"
                 Resource: !Sub
-                  - "arn:aws:s3:::${S3Bucket}"
+                  - "arn:${AWS::Partition}:s3:::${S3Bucket}"
                   - S3Bucket:
                       !Select [2, !Split ["/", !Ref EnvironmentInstanceFiles]]
                 Condition:
@@ -165,7 +165,7 @@ Resources:
                 Action:
                   - "ssm:GetParameter"
                   - "ssm:PutParameter"
-                Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*"
+                Resource: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*"
       PermissionsBoundary: !Ref InstanceRolePermissionBoundary
 
   InstanceProfile:
@@ -250,9 +250,9 @@ Resources:
         Fn::Base64: !Sub |
           #!/usr/bin/env bash
           # Download and execute bootstrap script
-          aws s3 cp "${EnvironmentInstanceFiles}/get_bootstrap.sh" "/tmp"
+          aws s3 cp --region "${AWS::Region}" "${EnvironmentInstanceFiles}/get_bootstrap.sh" "/tmp"
           chmod 500 "/tmp/get_bootstrap.sh"
-          /tmp/get_bootstrap.sh "${EnvironmentInstanceFiles}" '${S3Mounts}' >> "/var/log/bootstrap.log" 2>&1
+          /tmp/get_bootstrap.sh "${EnvironmentInstanceFiles}" '${S3Mounts}' "${AWS::Region}" 2>&1 >> "/var/log/bootstrap.log"
 
           # Customize workspace
           IDLE_TIME="${AutoStopIdleTimeInMinutes}"
@@ -265,7 +265,7 @@ Resources:
           # Signal result to CloudFormation
           /opt/aws/bin/cfn-signal -e $? --stack "${AWS::StackName}" --resource "EC2Instance" --region "${AWS::Region}"
 
-  EC2TargetGroup:
+  EC2TargetGroup:`
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 30
