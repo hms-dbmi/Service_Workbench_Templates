@@ -89,7 +89,10 @@ sudo yum install -y "/tmp/libgit2/${libgit2_devel_rpm}"
 # Other recommended system packages for installing R packages (https://docs.rstudio.com/rsc/post-setup-tool/)
 sudo yum groupinstall -y 'Development Tools'            # Compiling tools 
 sudo yum install -y libssh2-devel-1.4.*                       # Client SSH
-sudo yum install -y cmake3                       # CMAKE for packages that need it
+
+# Install CMAKE(3) for packages that need it
+sudo yum remove -y cmake
+sudo yum install -y cmake3
 sudo ln -s /usr/bin/cmake3 /usr/bin/cmake
 
 sudo yum install -y libjpeg-turbo-devel-1.2.*    # Images
