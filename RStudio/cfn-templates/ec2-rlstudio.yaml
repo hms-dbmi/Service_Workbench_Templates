@@ -265,7 +265,7 @@ Resources:
           # Signal result to CloudFormation
           /opt/aws/bin/cfn-signal -e $? --stack "${AWS::StackName}" --resource "EC2Instance" --region "${AWS::Region}"
 
-  EC2TargetGroup:`
+  EC2TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 30
