@@ -90,6 +90,11 @@ sudo yum install -y "/tmp/libgit2/${libgit2_devel_rpm}"
 sudo yum groupinstall -y 'Development Tools'            # Compiling tools 
 sudo yum install -y libssh2-devel-1.4.*                       # Client SSH
 
+# Install CMAKE(3) for packages that need it
+sudo yum remove -y cmake
+sudo yum install -y cmake3
+sudo ln -s /usr/bin/cmake3 /usr/bin/cmake
+
 sudo yum install -y libjpeg-turbo-devel-1.2.*    # Images
 sudo yum install -y ImageMagick-6.9.* ImageMagick-c++-devel-6.9.*   # Images
 sudo yum install -y mesa-libGLU-devel-9.0.*            # Graphs
