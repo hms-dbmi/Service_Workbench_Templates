@@ -40,6 +40,10 @@
     {
       "type": "shell",
       "script": "provisioners/provision-rstudio.sh"
+    },
+    {
+      "type": "shell",
+      "script": "provisioners/install-r-packages.sh"
     }
   ]
 }
