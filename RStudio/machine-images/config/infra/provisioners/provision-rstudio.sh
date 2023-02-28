@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+sudo timedatectl set-timezone UTC
+
 # Various development packages needed to compile R
 sudo yum install -y gcc-7.3.* gcc-gfortran-7.3.* gcc-c++-7.3.*
 sudo yum install -y java-1.8.0-openjdk-devel-1.8.0.*
