@@ -50,7 +50,7 @@ END
 sudo su - -c "R -e \"source('$tmpFile')\""
 
 # Output R library packages
-sudo su - -c "R -r \"installed.packages(lib.loc='/usr/local/lib64/R/library')[,'Version']\""
+sudo su - -c "R -e \"installed.packages(lib.loc='/usr/local/lib64/R/library')[,'Version']\""
 
 # Cleanup tmp folder
 sudo rm -rf "$tmpDir"
