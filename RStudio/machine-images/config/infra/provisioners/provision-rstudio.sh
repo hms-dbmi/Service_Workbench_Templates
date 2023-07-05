@@ -24,6 +24,22 @@ cd "../../.."
 # Cleanup R install tmp folder
 sudo rm -rf "/tmp/R"
 
+# ADD IPtables rules
+sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+sudo service iptables save
+
+#SELinux stuff
+sudo /sbin/selinuxenabled >& /dev/null
+if [ $? -eq 0 ]; then
+  sudo yum install -y policycoreutils-python setroubleshoot setools
+  sudo chcon -R -t bin_t /usr/lib/rstudio-server/bin/
+  sudo setsebool -P httpd_can_network_relay 1
+  sudo semanage port -m -t http_port_t -p tcp 8787
+  export TMP_DIR="/home/ec2-user/tmp"
+else
+  export TMP_DIR="/tmp"
+fi
+
 # Install RStudio
 rstudio_rpm="rstudio-server-rhel-1.4.1717-x86_64.rpm"
 curl -s "https://download2.rstudio.org/server/centos7/x86_64/${rstudio_rpm}" > "/tmp/rstudio/${rstudio_rpm}"
@@ -56,8 +72,7 @@ sudo mv "/tmp/rstudiov2/ssl/cert.key" "/etc/nginx/"
 sudo mv "/tmp/rstudio/nginx.conf" "/etc/nginx/"
 sudo chown -R nginx:nginx "/etc/nginx"
 sudo chmod -R 600 "/etc/nginx"
-sudo systemctl enable nginx
-sudo systemctl restart nginx
+sudo systemctl enable --now nginx
 
 # Install script that sets the service workbench user password at boot
 sudo mv "/tmp/rstudio/secret.txt" "/root/"
@@ -66,18 +81,14 @@ sudo chmod 600 "/root/secret.txt"
 sudo mv "/tmp/rstudio/set-password" "/usr/local/bin/"
 sudo chown root: "/usr/local/bin/set-password"
 sudo chmod 775 "/usr/local/bin/set-password"
-sudo crontab -l 2>/dev/null > "/tmp/crontab"
 sudo sh "/usr/local/bin/set-password"
-echo '@reboot /usr/local/bin/set-password 2>&1 >> /var/log/set-password.log' >> "/tmp/crontab"
-sudo crontab "/tmp/crontab"
+echo '@reboot /usr/local/bin/set-password 2>&1 >> /var/log/set-password.log' | sudo tee -a /var/spool/cron/root
 
 # Install script that checks idle time and shuts down if max idle is reached
 sudo mv "/tmp/rstudio/check-idle" "/usr/local/bin/"
 sudo chown root: "/usr/local/bin/check-idle"
 sudo chmod 775 "/usr/local/bin/check-idle"
-sudo crontab -l 2>/dev/null > "/tmp/crontab"
-echo '*/2 * * * * /usr/local/bin/check-idle 2>&1 >> /var/log/check-idle.log' >> "/tmp/crontab"
-sudo crontab "/tmp/crontab"
+echo '*/2 * * * * /usr/local/bin/check-idle 2>&1 >> /var/log/check-idle.log' | sudo tee -a /var/spool/cron/root
 
 # Cleanup RStudio install tmp folder
 sudo rm -rf "/tmp/rstudio"
@@ -96,13 +107,13 @@ sudo yum install -y "/tmp/libgit2/${libgit2_devel_rpm}"
 sudo rm -rf "/tmp/libgit2"
 
 # Other recommended system packages for installing R packages (https://docs.rstudio.com/rsc/post-setup-tool/)
-sudo yum groupinstall -y 'Development Tools'            # Compiling tools 
+sudo yum groupinstall -y 'Development Tools'            # Compiling tools
 sudo yum install -y libssh2-devel-1.4.*                       # Client SSH
 
 # Install CMAKE(3) for packages that need it
-sudo yum remove -y cmake
+sudo yum remove -y cmake || true
 sudo yum install -y cmake3
-sudo ln -s /usr/bin/cmake3 /usr/bin/cmake
+[ -h /usr/bin/cmake ] || sudo ln -fs /usr/bin/cmake3 /usr/bin/cmake
 
 sudo yum install -y libjpeg-turbo-2.0.* libjpeg-turbo-devel-2.0.*    # Images
 sudo yum install -y ImageMagick-6.9.* ImageMagick-c++-devel-6.9.*   # Images
