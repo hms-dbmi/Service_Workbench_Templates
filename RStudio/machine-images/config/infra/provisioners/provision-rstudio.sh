@@ -38,6 +38,10 @@ sudo make
 sudo make install
 cd "../../.."
 
+# Set permissions for lib
+[ -n "$SELINUX" ] && sudo chmod -R 755 /usr/local/lib64
+
+
 # Cleanup R install tmp folder
 sudo rm -rf "$TMP_DIR/tmp/R"
 
