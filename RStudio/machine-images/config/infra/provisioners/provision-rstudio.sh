@@ -16,12 +16,10 @@ if [ $? -eq 0 ]; then
   export TMP_DIR="/home/ec2-user"
 fi
 
-sudo timedatectl status
-
 [ -z "$SELINUX" ] && sudo timedatectl set-timezone UTC
 
 # Various development packages needed to compile R
-sudo yum downgrade -y libcurl curl
+sudo yum downgrade -y libcurl curl # for curl-7.88
 sudo yum install -y gcc-7.3.* gcc-gfortran-7.3.* gcc-c++-7.3.*
 sudo yum install -y java-1.8.0-openjdk-devel-1.8.0.*
 sudo yum install -y readline-devel-6.2 zlib-devel-1.2.* bzip2-devel-1.0.* xz-devel-5.2.* pcre-devel-8.32
@@ -103,7 +101,7 @@ sudo yum install -y "http://mirror.centos.org/centos/7/extras/x86_64/Packages/${
 
 # Other recommended system packages for installing R packages (https://docs.rstudio.com/rsc/post-setup-tool/)
 sudo yum groupinstall -y 'Development Tools'            # Compiling tools
-sudo yum install -y libssh2-devel-1.4.*                       # Client SSH
+sudo yum install -y libssh2-devel-1.4.*                 # Client SSH
 
 # Install CMAKE(3) for packages that need it
 sudo yum remove -y cmake || true
@@ -111,9 +109,9 @@ sudo yum install -y cmake3
 [ -h /usr/bin/cmake ] || sudo ln -fs /usr/bin/cmake3 /usr/bin/cmake
 
 sudo yum install -y libjpeg-turbo-2.0.* libjpeg-turbo-devel-2.0.*    # Images
-sudo yum install -y ImageMagick-6.9.* ImageMagick-c++-devel-6.9.*   # Images
-sudo yum install -y mesa-libGLU-devel-9.0.*            # Graphs
-sudo yum install freetype-devel-2.8 harfbuzz-devel-1.7.*          # Font
+sudo yum install -y ImageMagick-6.9.* ImageMagick-c++-devel-6.9.*    # Images
+sudo yum install -y mesa-libGLU-devel-9.0.*                          # Graphs
+sudo yum install -y freetype-devel-2.8 harfbuzz-devel-1.7.*          # Font
 
 sudo yum install -y mariadb-devel-5.5.*                       # MariaDB/MySQL client & server packages
 sudo yum install -y unixODBC-devel-2.3.*                      # ODBC API client
