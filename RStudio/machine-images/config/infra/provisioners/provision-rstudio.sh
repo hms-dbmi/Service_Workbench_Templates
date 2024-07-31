@@ -25,8 +25,8 @@ cd "../../.."
 sudo rm -rf "/tmp/R"
 
 # Install RStudio
-rstudio_rpm="rstudio-server-rhel-1.4.1717-x86_64.rpm"
-curl -s "https://download2.rstudio.org/server/centos7/x86_64/${rstudio_rpm}" > "/tmp/rstudio/${rstudio_rpm}"
+rstudio_rpm="rstudio-server-rhel-2024.04.2-764-x86_64.rpm"
+curl -s "https://download2.rstudio.org/server/rhel9/x86_64/${rstudio_rpm}" > "/tmp/rstudio/${rstudio_rpm}"
 sudo yum install -y "/tmp/rstudio/${rstudio_rpm}"
 sudo systemctl enable rstudio-server
 sudo systemctl restart rstudio-server
@@ -83,17 +83,7 @@ sudo crontab "/tmp/crontab"
 sudo rm -rf "/tmp/rstudio"
 
 # Install system packages necessary for installing R packages through RStudio CRAN [devtools, tidyverse]
-sudo yum install -y git-2.23.* openssl-devel-1.0.* libxml2-devel-2.9.*
-libgit2_rpm="libgit2-0.26.6-1.el7.x86_64.rpm"
-libgit2_devel_rpm="libgit2-devel-0.26.6-1.el7.x86_64.rpm"
-mkdir -p "/tmp/libgit2/"
-curl -s "http://mirror.centos.org/centos/7/extras/x86_64/Packages/${libgit2_rpm}" > "/tmp/libgit2/${libgit2_rpm}"
-sudo yum install -y "/tmp/libgit2/${libgit2_rpm}"
-curl -s "http://mirror.centos.org/centos/7/extras/x86_64/Packages/${libgit2_devel_rpm}" > "/tmp/libgit2/${libgit2_devel_rpm}"
-sudo yum install -y "/tmp/libgit2/${libgit2_devel_rpm}"
-
-# Cleanup libgit2 install tmp folder
-sudo rm -rf "/tmp/libgit2"
+sudo yum install -y git-2.23.* openssl-devel-1.0.* libxml2-devel-2.9.* libgit2 libgit2-devel
 
 # Other recommended system packages for installing R packages (https://docs.rstudio.com/rsc/post-setup-tool/)
 sudo yum groupinstall -y 'Development Tools'            # Compiling tools 
