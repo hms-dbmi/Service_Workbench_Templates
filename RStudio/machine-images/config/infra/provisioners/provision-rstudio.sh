@@ -83,6 +83,7 @@ sudo crontab "/tmp/crontab"
 sudo rm -rf "/tmp/rstudio"
 
 # Install system packages necessary for installing R packages through RStudio CRAN [devtools, tidyverse]
+sudo yum install epel-release
 sudo yum install -y git-2.23.* openssl-devel-1.0.* libxml2-devel-2.9.* libgit2 libgit2-devel
 
 # Other recommended system packages for installing R packages (https://docs.rstudio.com/rsc/post-setup-tool/)
