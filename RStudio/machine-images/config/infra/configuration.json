@@ -1,10 +1,7 @@
 {
-    "aws_access_key": "",
-    "aws_secret_key": "",
-    "awsRegion": "",
-    "vpcId": "",
-    "subnetId": "",
-    "amiName": "",
-    "awsProfile": "",
-    "stageName": ""
+    "vpcId": "vpc-0e8b170256f6e10db",
+    "subnetId": "subnet-07c7377b61bc3d48b",
+    "amiName": "bch-dev-va-sw-RSTUDIO-1724245171",
+    "awsProfile": "default",
+    "stageName": "bch-dev"
 }
