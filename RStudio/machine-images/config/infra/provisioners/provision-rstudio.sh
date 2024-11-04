@@ -28,7 +28,7 @@ sudo rm -rf "/tmp/R"
 
 # Install RStudio
 rstudio_rpm="rstudio-server-rhel-1.4.1717-x86_64.rpm"
-curl -s "https://download2.rstudio.org/server/centos/x86_64/${rstudio_rpm}" > "/tmp/rstudio/${rstudio_rpm}"
+curl -s "https://download2.rstudio.org/server/centos7/x86_64/${rstudio_rpm}" > "/tmp/rstudio/${rstudio_rpm}"
 sudo yum install -y "/tmp/rstudio/${rstudio_rpm}"
 sudo systemctl enable rstudio-server
 sudo systemctl restart rstudio-server
