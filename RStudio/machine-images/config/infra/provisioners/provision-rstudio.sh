@@ -6,7 +6,9 @@ sudo timedatectl set-timezone UTC
 sudo yum install -y gcc-7.3.* gcc-gfortran-7.3.* gcc-c++-7.3.*
 sudo yum install -y java-1.8.0-openjdk-devel-1.8.0.*
 sudo yum install -y readline-devel-6.2 zlib-devel-1.2.* bzip2-devel-1.0.* xz-devel-5.2.* pcre-devel-8.32
-sudo yum install -y libcurl-devel-7.88.* libpng-devel-1.5.* cairo-devel-1.15.* pango-devel-1.42.*
+sudo yum downgrade -y curl-7.88.1-1.amzn2.0.1 libcurl-7.88.1-1.amzn2.0.1
+sudo yum install -y libcurl-devel-7.88.*
+sudo yum install -y libpng-devel-1.5.* cairo-devel-1.15.* pango-devel-1.42.*
 sudo yum install -y xorg-x11-server-devel-1.20.* libX11-devel-1.6.* libXt-devel-1.1.*
 
 # Install R from source (https://docs.rstudio.com/resources/install-r-source/)
@@ -83,17 +85,8 @@ sudo crontab "/tmp/crontab"
 sudo rm -rf "/tmp/rstudio"
 
 # Install system packages necessary for installing R packages through RStudio CRAN [devtools, tidyverse]
-sudo yum install -y git-2.23.* openssl-devel-1.0.* libxml2-devel-2.9.*
-libgit2_rpm="libgit2-0.26.6-1.el7.x86_64.rpm"
-libgit2_devel_rpm="libgit2-devel-0.26.6-1.el7.x86_64.rpm"
-mkdir -p "/tmp/libgit2/"
-curl -s "http://mirror.centos.org/centos/7/extras/x86_64/Packages/${libgit2_rpm}" > "/tmp/libgit2/${libgit2_rpm}"
-sudo yum install -y "/tmp/libgit2/${libgit2_rpm}"
-curl -s "http://mirror.centos.org/centos/7/extras/x86_64/Packages/${libgit2_devel_rpm}" > "/tmp/libgit2/${libgit2_devel_rpm}"
-sudo yum install -y "/tmp/libgit2/${libgit2_devel_rpm}"
-
-# Cleanup libgit2 install tmp folder
-sudo rm -rf "/tmp/libgit2"
+sudo yum install epel-release
+sudo yum install -y git-2.23.* openssl-devel-1.0.* libxml2-devel-2.9.* libgit2 libgit2-devel
 
 # Other recommended system packages for installing R packages (https://docs.rstudio.com/rsc/post-setup-tool/)
 sudo yum groupinstall -y 'Development Tools'            # Compiling tools 
